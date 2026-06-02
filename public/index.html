@@ -270,20 +270,36 @@
 </div>
 
 <script>
+// Full artwork collection embedded so the gallery ALWAYS loads every piece,
+// even when opened directly from disk (file://) where fetch() is blocked.
+const EMBEDDED_WORKS = [{"image": "artwork/art-01.jpg", "title": "Embrace the Colors", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "A figure rendered in grayscale reaches toward an explosion of rainbow color, capturing the moment of letting joy and emotion flood back into a muted world."}, {"image": "artwork/art-02.jpg", "title": "Radiant Singing Sun", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "A luminous sun bursts with warmth and song, radiating energy across the composition."}, {"image": "artwork/art-03.jpg", "title": "Sinister Being", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "A darker, atmospheric study exploring shadow, tension, and an unsettling presence."}, {"image": "artwork/art-04.jpg", "title": "Colorful Takeover", "year": "2026", "medium": "Digital on iPad", "size": "37 x 30 in. (94 x 76.2 cm.)", "description": "Vivid color sweeps across the canvas, overtaking the neutral space in a bold display of energy."}, {"image": "artwork/art-05.jpg", "title": "Pulling You Into my World", "year": "2025", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "An inviting, immersive piece that draws the viewer inward toward the artist's imagined world."}, {"image": "artwork/art-06.jpg", "title": "Colorful Tears of Emotion", "year": "2026", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "Emotion spills out as streams of color, turning feeling into something visible and vivid."}, {"image": "artwork/art-07.jpg", "title": "A Soulful Orb and a Souless Girl", "year": "2026", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "A glowing orb of life set against a figure drained of it, a study in contrast and longing."}, {"image": "artwork/art-08.jpg", "title": "Flower Filled Vision", "year": "2025", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "A dreamlike scene blooming with flowers, soft and full of life."}, {"image": "artwork/art-09.jpg", "title": "Falling Into Control", "year": "2025", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "A piece exploring the paradox of surrendering and finding control in the same descent."}, {"image": "artwork/art-10.jpg", "title": "Feelin' The Breeze", "year": "2025", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "A light, airy composition that captures the quiet calm of a gentle wind."}, {"image": "artwork/art-11.jpg", "title": "Self Care", "year": "2025", "medium": "Digital on iPad", "size": "20.5 x 16 in. (52.1 x 40.6 cm.)", "description": "A tender, introspective work celebrating the quiet practice of caring for oneself."}, {"image": "artwork/art-12.jpg", "title": "Big Golden Flower", "year": "2025", "medium": "Digital on iPad", "size": "20.5 x 16 in. (52.1 x 40.6 cm.)", "description": "A single radiant golden flower commands the frame, warm and full of presence."}, {"image": "artwork/art-13.jpg", "title": "Golden Evening Wind", "year": "2025", "medium": "Digital on iPad", "size": "20.5 x 16 in. (52.1 x 40.6 cm.)", "description": "Golden-hour light and a soft evening breeze captured in warm, flowing tones."}, {"image": "artwork/art-14.jpg", "title": "Polar Opposites", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "A composition built on contrast, two opposing forces meeting on a single canvas."}, {"image": "artwork/art-15.jpg", "title": "Unknown Plains", "year": "2026", "medium": "Digital on iPad", "size": "21.3 x 21.3 in. (54.1 x 54.1 cm.)", "description": "A vast, mysterious landscape stretching toward the unexplored."}, {"image": "artwork/art-16.jpg", "title": "Regretful Decision", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "An emotional narrative piece exploring the weight of a choice and the feeling that follows it."}, {"image": "artwork/art-17.jpg", "title": "Not-So-Cartoon Tiger", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "A tiger that blurs the line between playful cartoon and striking realism."}, {"image": "artwork/art-18.jpg", "title": "Grey Reality Behind Color", "year": "2026", "medium": "Digital on iPad", "size": "37 x 30 in. (94 x 76.2 cm.)", "description": "Bright color masks a grey truth beneath, a meditation on appearance versus reality."}, {"image": "artwork/art-19.jpg", "title": "Dreamy Aura", "year": "2026", "medium": "Digital on iPad", "size": "21 x 27 in. (53 x 69 cm.)", "description": "A soft, ethereal glow surrounds the subject, wrapping the scene in a dreamlike haze."}, {"image": "artwork/art-20.jpg", "title": "Winter Smile", "year": "2026", "medium": "Digital on iPad", "size": "30 x 37 in. (76.2 x 94 cm.)", "description": "Warmth and joy set against a cold season, a smile that brightens the winter air."}];
+
 let WORKS = [], current = 0;
 
 async function load(){
-  // Prefer locally saved edits (from admin panel), else the published JSON file.
-  const saved = localStorage.getItem('artbyvidhya_works');
-  if(saved){
-    try{ WORKS = JSON.parse(saved); }catch(e){ WORKS = []; }
-  }
-  if(!WORKS.length){
-    try{
-      const res = await fetch('artwork.json');
-      WORKS = await res.json();
-    }catch(e){ WORKS = []; }
-  }
+  // 1) Always start from the complete embedded collection.
+  WORKS = EMBEDDED_WORKS.slice();
+
+  // 2) Try the published artwork.json (works when served over http/https).
+  //    If it has MORE pieces than the embedded set, use it (keeps future edits live).
+  try{
+    const res = await fetch('artwork.json', {cache:'no-store'});
+    if(res.ok){
+      const json = await res.json();
+      if(Array.isArray(json) && json.length >= WORKS.length) WORKS = json;
+    }
+  }catch(e){ /* file:// or offline — embedded data already loaded */ }
+
+  // 3) Only use locally saved admin edits if they include AT LEAST the full set,
+  //    so a stale/partial preview can never hide artwork.
+  try{
+    const saved = localStorage.getItem('artbyvidhya_works');
+    if(saved){
+      const arr = JSON.parse(saved);
+      if(Array.isArray(arr) && arr.length >= WORKS.length) WORKS = arr;
+    }
+  }catch(e){ /* ignore bad cache */ }
+
   render();
 }
 
