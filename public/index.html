@@ -663,12 +663,86 @@ async function trackHits(){
 trackHits();
 </script>
 <style>
+/* ============================================================
+   RESPONSIVE — tablet + mobile
+   ============================================================ */
+
+/* --- Tablet (681 – 1020 px) -------------------------------- */
+@media(min-width:681px) and (max-width:1020px){
+  .brand img { height:80px }
+  .brand b   { font-size:2rem }
+  .nav       { padding:10px 22px }
+}
+
+/* --- Mobile (≤ 680 px) ------------------------------------- */
 @media(max-width:680px){
-  nav ul#menu{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);flex-direction:column;gap:0;border-bottom:1px solid var(--line)}
-  nav ul#menu.show{display:flex}
-  nav ul#menu li{padding:0 28px}
-  nav ul#menu a{display:block;padding:14px 0;border-top:1px solid var(--line)}
-  .nav-toggle{display:block}
+
+  /* Header */
+  .nav        { padding:10px 16px; gap:10px }
+  .brand      { gap:8px }
+  .brand img  { height:48px }
+  .brand b    { font-size:1.35rem; letter-spacing:.05px }
+  .brand > span > span { font-size:.56rem; letter-spacing:.16em }
+
+  /* Mobile nav dropdown */
+  nav ul#menu{
+    display:none;position:absolute;top:100%;left:0;right:0;
+    background:var(--paper);flex-direction:column;gap:0;
+    border-bottom:1px solid var(--line);z-index:99;
+  }
+  nav ul#menu.show{ display:flex }
+  nav ul#menu li  { padding:0 20px }
+  nav ul#menu a   { display:block;padding:13px 0;border-top:1px solid var(--line) }
+  .nav-toggle     { display:block }
+
+  /* Hero */
+  .hero         { padding:36px 18px 32px; gap:28px }
+  .hero-eyebrow { font-size:.66rem; letter-spacing:.22em; margin-bottom:16px }
+  .hero h1      { max-width:none; line-height:1.02 }
+  .hero p.lede  { font-size:.95rem; margin-top:16px; max-width:none }
+  .hero-meta    { gap:10px 18px; margin-top:20px; font-size:.75rem }
+
+  /* Featured artwork card */
+  .featured-imgbox img { height:210px }
+  .featured-cap        { padding:11px 14px 13px; gap:0 8px }
+  .f-ttl               { font-size:.9rem }
+  .f-yr                { font-size:.72rem }
+  .f-hint              { font-size:.62rem; margin-top:8px }
+
+  /* Sections */
+  .section      { padding:22px 16px 48px }
+  .section-head { padding-top:18px; margin-bottom:20px }
+  .section-head h2 { font-size:1.5rem }
+  .section-head .count { font-size:.7rem }
+
+  /* Gallery cards */
+  .card .cap h3  { font-size:1rem }
+  .card .cap .sub{ font-size:.73rem }
+
+  /* About */
+  .about-copy h2  { font-size:1.55rem }
+  .about-copy p   { font-size:.95rem }
+  .about-wrap     { gap:22px }
+
+  /* Contact */
+  .contact-inner  { padding:52px 18px }
+  .contact a.mail { font-size:1.05rem }
+
+  /* Footer */
+  .foot{
+    flex-direction:column;align-items:center;
+    text-align:center;gap:8px;padding:22px 18px;
+  }
+
+  /* Lightbox nav on mobile */
+  .lb-inner { padding:0 12px }
+}
+
+/* --- Very small phones (≤ 360 px) -------------------------- */
+@media(max-width:360px){
+  .brand b    { font-size:1.15rem }
+  .brand img  { height:40px }
+  .hero h1    { font-size:2.2rem }
 }
 </style>
 </body>
