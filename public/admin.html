@@ -68,6 +68,55 @@
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-size:.9rem;opacity:0;transition:.3s;z-index:99}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  /* ---------- Login gate ---------- */
+  #login-gate{
+    position:fixed;inset:0;z-index:200;
+    background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+  }
+  .login-box{
+    background:#fff;border:1px solid var(--line);border-radius:20px;
+    padding:48px 44px;width:100%;max-width:400px;
+    box-shadow:0 24px 64px -16px rgba(20,16,26,.18);
+    text-align:center;
+  }
+  .login-box .lock{font-size:2.2rem;margin-bottom:18px;line-height:1}
+  .login-box h2{
+    font-family:var(--display);font-weight:500;font-size:1.55rem;
+    margin-bottom:6px;
+  }
+  .login-box .sub{color:var(--ink-soft);font-size:.88rem;margin-bottom:28px}
+  .login-box input{
+    width:100%;font-family:var(--body);font-size:1rem;
+    border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;margin-bottom:14px;
+    color:var(--ink);background:#fff;
+    transition:border-color .2s;
+  }
+  .login-box input:focus{outline:none;border-color:var(--accent-2)}
+  .login-box button{
+    width:100%;font-family:var(--body);font-weight:700;font-size:.95rem;
+    background:var(--ink);color:#fff;border:none;border-radius:10px;
+    padding:13px;cursor:pointer;transition:background .2s,transform .15s;
+  }
+  .login-box button:hover{background:#2e2a38;transform:translateY(-1px)}
+  .login-box .err{
+    margin-top:12px;color:#b3344f;font-size:.85rem;
+    min-height:20px;
+  }
+  .login-box .change-hint{
+    margin-top:22px;font-size:.75rem;color:var(--ink-soft);
+    border-top:1px solid var(--line);padding-top:16px;
+  }
+  .logout-btn{
+    font-family:var(--body);font-size:.78rem;font-weight:600;
+    background:none;border:1px solid var(--line);border-radius:7px;
+    padding:6px 12px;cursor:pointer;color:var(--ink-soft);
+    transition:.15s;
+  }
+  .logout-btn:hover{border-color:var(--accent);color:var(--accent)}
+
   .guide{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:18px 20px;margin-top:30px;font-size:.9rem;color:var(--ink-soft)}
   .guide h3{font-family:var(--display);color:var(--ink);font-size:1.05rem;margin-bottom:8px}
   .guide ol{margin:8px 0 0 20px}
@@ -76,13 +125,32 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- Login gate — hidden once authenticated -->
+<div id="login-gate">
+  <div class="login-box">
+    <div class="lock">🔒</div>
+    <h2>Admin Access</h2>
+    <p class="sub">Enter the portfolio password to continue</p>
+    <input type="password" id="pwd-input" placeholder="Password"
+           autocomplete="current-password"
+           onkeydown="if(event.key==='Enter')doLogin()" />
+    <button onclick="doLogin()">Unlock Portfolio Manager</button>
+    <p class="err" id="login-err"></p>
+    <p class="change-hint">Forgot the password? Contact the site admin.<br>Default: <code>ArtByVidhya@2026</code></p>
+  </div>
+</div>
+
+<div class="wrap" id="admin-wrap" style="display:none">
   <header>
     <a class="brand" href="index.html">
       <img src="assets/logo.png" alt="logo" />
       <span><b>Art by Vidhya</b><small>Portfolio Manager</small></span>
     </a>
-    <a href="index.html" style="font-size:.85rem;font-weight:600">← View Site</a>
+    <div style="display:flex;align-items:center;gap:14px">
+      <a href="index.html" style="font-size:.85rem;font-weight:600">← View Site</a>
+      <button class="logout-btn" onclick="doLogout()">Log out</button>
+    </div>
   </header>
 
   <h1>Manage Portfolio</h1>
@@ -111,11 +179,56 @@
       <li>Put the downloaded <code>artwork.json</code> and any new images (in the <code>artwork/</code> folder) into the project, then push to GitHub. The site updates automatically.</li>
     </ol>
   </div>
-</div>
+</div><!-- /admin-wrap -->
 
 <div class="toast" id="toast"></div>
 
 <script>
+/* ---- Auth ---- */
+// SHA-256 hash of the admin password (never store plaintext).
+// Default password: ArtByVidhya@2026
+// To change: run  echo -n "NewPassword" | openssl dgst -sha256
+//            then replace the hash string below.
+const ADMIN_HASH = 'da44eaf006f4b3487f0fe3d616dbb174a13993e03aabbe36a619f47e64a26330';
+
+async function sha256(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin(){
+  const pwd = document.getElementById('pwd-input').value;
+  const err = document.getElementById('login-err');
+  if(!pwd){ err.textContent = 'Please enter the password.'; return; }
+  const hash = await sha256(pwd);
+  if(hash === ADMIN_HASH){
+    sessionStorage.setItem('avv_admin','1');
+    document.getElementById('login-gate').style.display  = 'none';
+    document.getElementById('admin-wrap').style.display  = '';
+    err.textContent = '';
+    init();
+  } else {
+    err.textContent = 'Incorrect password. Please try again.';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+function doLogout(){
+  sessionStorage.removeItem('avv_admin');
+  document.getElementById('admin-wrap').style.display  = 'none';
+  document.getElementById('login-gate').style.display  = 'flex';
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('login-err').textContent = '';
+}
+
+// On load: skip login screen if already authenticated this session
+if(sessionStorage.getItem('avv_admin') === '1'){
+  document.getElementById('login-gate').style.display  = 'none';
+  document.getElementById('admin-wrap').style.display  = '';
+}
+
+/* ---- Portfolio manager ---- */
 let WORKS = [];
 
 function key(){return 'artbyvidhya_works';}
@@ -210,7 +323,7 @@ function handle(files){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);}
 
-init();
+if(sessionStorage.getItem('avv_admin') === '1') init();
 </script>
 </body>
 </html>
