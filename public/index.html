@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" href="favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
     --ink:#16141a;
@@ -62,8 +62,21 @@
   padding:0;
   mix-blend-mode:multiply;
 }
-  .brand b{font-family:var(--display);font-weight:600;font-size:1.15rem;letter-spacing:.2px}
-  .brand span{display:block;font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .brand b{
+    font-family:"Cormorant Garamond", var(--display);
+    font-weight:600;
+    font-size:2.8rem;
+    letter-spacing:.15px;
+    font-style:normal;
+  }
+  .brand span{
+    display:block;
+    font-size:.66rem;
+    letter-spacing:.28em;
+    text-transform:none;
+    color:var(--ink-soft);
+    font-weight:600
+  }
   nav ul{display:flex;gap:30px;list-style:none}
   nav a{font-size:.82rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);transition:color .2s}
   nav a:hover{color:var(--accent)}
@@ -74,7 +87,13 @@
     max-width:var(--maxw);margin:0 auto;
     padding:90px 28px 70px;
     position:relative;
+    display:grid;
+    grid-template-columns:1fr 390px;
+    gap:64px;
+    align-items:center;
   }
+  @media(max-width:1020px){.hero{grid-template-columns:1fr;gap:40px;padding-bottom:50px}}
+  .hero-text{position:relative}
   .hero-eyebrow{
     font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
     color:var(--accent);font-weight:700;margin-bottom:22px;
@@ -96,13 +115,84 @@
   }
   .hero-meta b{color:var(--ink);font-weight:700}
   .blob{
-    position:absolute;right:-60px;top:40px;width:46%;max-width:560px;
+    position:absolute;right:-80px;top:-20px;width:80%;max-width:420px;
     aspect-ratio:1;border-radius:50%;
     background:conic-gradient(from 120deg,var(--accent),var(--accent-3),var(--accent-2),var(--accent));
-    filter:blur(60px);opacity:.22;z-index:-1;
+    filter:blur(70px);opacity:.18;z-index:-1;
     animation:float 14s ease-in-out infinite;
+    pointer-events:none;
   }
   @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(26px) scale(1.05)}}
+
+  /* ---------- Featured Artwork (hero) ---------- */
+  .hero-featured{
+    cursor:pointer;
+    transition:opacity .8s .3s;
+    position:relative;
+  }
+  .featured-frame{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 28px 72px -18px rgba(20,16,26,.24);
+    transition:transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s;
+    will-change:transform;
+  }
+  .hero-featured:hover .featured-frame{
+    transform:translateY(-8px) rotate(0deg) !important;
+    box-shadow:0 44px 96px -18px rgba(20,16,26,.36);
+  }
+  .featured-imgbox{position:relative;overflow:hidden;background:var(--paper-2)}
+  .featured-imgbox img{
+    width:100%;height:340px;object-fit:cover;
+    display:block;
+    transition:transform .55s cubic-bezier(.2,.7,.2,1);
+  }
+  .hero-featured:hover .featured-imgbox img{transform:scale(1.05)}
+  .featured-imgbox::after{
+    content:"© Vidhyasree Murugesapandian";
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(transparent,rgba(0,0,0,.6));
+    color:rgba(255,255,255,.85);
+    padding:30px 14px 10px;
+    font-size:.65rem;text-align:center;letter-spacing:.06em;
+    pointer-events:none;
+  }
+  .featured-ov{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(22,20,26,0);
+    color:#fff;font-size:.76rem;font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;
+    opacity:0;
+    transition:opacity .3s, background .3s;
+  }
+  .hero-featured:hover .featured-ov{opacity:1;background:rgba(22,20,26,.3)}
+  .featured-cap{
+    padding:14px 18px 16px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:0 10px;
+    align-items:baseline;
+  }
+  .f-num{
+    font-size:.63rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;white-space:nowrap;
+  }
+  .f-ttl{
+    font-family:var(--display);font-weight:500;font-size:1.06rem;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .f-yr{font-size:.78rem;color:var(--ink-soft);white-space:nowrap}
+  .f-hint{
+    margin-top:10px;text-align:center;
+    font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);opacity:.65;
+  }
+  @media(max-width:1020px){
+    .featured-imgbox img{height:260px}
+  }
 
   /* ---------- Section heads ---------- */
   .section{max-width:var(--maxw);margin:0 auto;padding:40px 28px 80px}
@@ -125,7 +215,14 @@
   .card.in{opacity:1;transform:none}
   .card:hover{transform:translateY(-5px);box-shadow:0 22px 44px -22px rgba(20,16,26,.4)}
   .card .imgwrap{position:relative;overflow:hidden;background:var(--paper-2)}
-  .card img{width:100%;height:auto;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .card .imgwrap::after{
+    content:"© Vidhyasree Murugesapandian";
+    position:absolute;bottom:10px;left:10px;right:10px;
+    background:rgba(0,0,0,.7);color:#fff;padding:8px;
+    font-size:.7rem;text-align:center;border-radius:4px;
+    z-index:10;pointer-events:none;
+  }
+  .card img{width:100%;height:auto;transition:transform .6s cubic-bezier(.2,.7,.2,1);position:relative}
   .card:hover img{transform:scale(1.04)}
   .card .cap{padding:16px 18px 18px}
   .card .cap h3{font-family:var(--display);font-weight:500;font-size:1.12rem;line-height:1.2}
@@ -154,10 +251,30 @@
   }
   .contact a.mail:hover{color:var(--accent-3)}
 
+  /* ---------- Hit Counter ---------- */
+  .hit-counter{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:600;
+  }
+  .hit-counter .hit-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 0 rgba(224,69,123,.5);
+    animation:pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{box-shadow:0 0 0 0 rgba(224,69,123,.45)}
+    50%{box-shadow:0 0 0 5px rgba(224,69,123,0)}
+  }
+  .hit-val{font-size:.94rem;font-weight:700;color:var(--ink)}
+
   /* ---------- Footer ---------- */
   footer.site{background:var(--ink);color:#b8b2bf;border-top:1px solid #2c2833}
   .foot{max-width:var(--maxw);margin:0 auto;padding:30px 28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:.78rem;letter-spacing:.04em}
   .foot a:hover{color:#fff}
+  .foot-hits{display:flex;align-items:center;gap:6px;color:#8b8593}
+  .foot-hits .fh-num{color:#cfc9d4;font-weight:600}
 
   /* ---------- Lightbox ---------- */
   .lb{
@@ -193,7 +310,7 @@
     <a class="brand" href="#top">
       <img src="assets/logo.png" alt="Art by Vidhya logo" />
       <span style="display:flex;flex-direction:column">
-        <b>Art by Vidhya</b>
+        <b>Art By Vidhya</b>
         <span>Digital &amp; Illustration</span>
       </span>
     </a>
@@ -210,14 +327,34 @@
 
 <a id="top"></a>
 <section class="hero">
-  <div class="blob"></div>
-  <div class="hero-eyebrow">Portfolio · iPad Digital Art</div>
-  <h1>Color, feeling &amp; <em>imagination</em>, drawn by hand.</h1>
-  <p class="lede">The digital art and illustration of Vidhyasree Murugesapandian — original works exploring emotion, contrast, and worlds built entirely from color.</p>
-  <div class="hero-meta">
-    <span><b id="m-count">20</b> Original Works</span>
-    <span><b>2025 — 2026</b></span>
-    <span><b>Digital on iPad</b></span>
+  <div class="hero-text">
+    <div class="blob"></div>
+    <div class="hero-eyebrow">Portfolio · iPad Digital Art</div>
+    <h1>Color, feeling &amp; <em>imagination</em>, drawn by hand.</h1>
+    <p class="lede">The digital art and illustration of Vidhyasree Murugesapandian — original works exploring emotion, contrast, and worlds built entirely from color.</p>
+    <div class="hero-meta">
+      <span><b id="m-count">20</b> Original Works</span>
+      <span><b>2025 — 2026</b></span>
+      <span><b>Digital on iPad</b></span>
+      <span class="hit-counter" id="hit-counter-wrap" style="opacity:0;transition:opacity .5s">
+        <span class="hit-dot"></span>
+        <span class="hit-val" id="hit-count">—</span> Visitors
+      </span>
+    </div>
+  </div>
+  <div class="hero-featured" id="featured-wrap" style="opacity:0" aria-label="Featured artwork — click to view">
+    <div class="featured-frame" id="featured-frame">
+      <div class="featured-imgbox">
+        <img id="featured-img" src="" alt="" />
+        <div class="featured-ov">View in Detail</div>
+      </div>
+      <div class="featured-cap">
+        <span class="f-num" id="featured-num"></span>
+        <span class="f-ttl" id="featured-title"></span>
+        <span class="f-yr" id="featured-year"></span>
+      </div>
+    </div>
+    <p class="f-hint">A different piece appears on each visit</p>
   </div>
 </section>
 
@@ -253,6 +390,9 @@
 <footer class="site">
   <div class="foot">
     <span>© <span id="yr"></span> Vidhyasree Murugesapandian · artbyvidhya.com</span>
+    <span class="foot-hits" id="foot-hits-wrap" style="opacity:0;transition:opacity .5s">
+      <span class="fh-num" id="foot-hit-count">—</span> visitors
+    </span>
     <span><a href="admin.html">Manage Portfolio</a></span>
   </div>
 </footer>
@@ -327,7 +467,7 @@ function render(){
     const c = document.createElement('article');
     c.className='card';
     c.innerHTML = `
-      <div class="imgwrap"><img loading="lazy" src="${w.image}" alt="${esc(w.title)}"></div>
+      <div class="imgwrap"><img loading="lazy" src="${w.image}" alt="${esc(w.title)}" title="© Vidhyasree Murugesapandian"></div>
       <div class="cap">
         <h3>${esc(w.title)}</h3>
         <div class="sub"><b>${esc(w.year)}</b> · ${esc(w.medium)}</div>
@@ -335,7 +475,44 @@ function render(){
     c.onclick = ()=>openLb(i);
     g.appendChild(c);
   });
+  showFeaturedWork();
   observe();
+}
+
+function showFeaturedWork(){
+  if(!WORKS.length) return;
+
+  // Guarantee a different piece from the previous page load
+  const lastIdx = parseInt(sessionStorage.getItem('avv_feat') ?? '-1');
+  let idx;
+  if(WORKS.length === 1){
+    idx = 0;
+  } else {
+    do { idx = Math.floor(Math.random() * WORKS.length); } while(idx === lastIdx);
+  }
+  sessionStorage.setItem('avv_feat', String(idx));
+
+  const w = WORKS[idx];
+
+  // Visual variety: random tilt (-2° … +2°) and object-position
+  const tilt   = (Math.random() * 4 - 2).toFixed(2);
+  const vpos   = ['top','center','center','bottom'][Math.floor(Math.random() * 4)];
+
+  const img   = document.getElementById('featured-img');
+  const frame = document.getElementById('featured-frame');
+  const wrap  = document.getElementById('featured-wrap');
+
+  img.src = w.image;
+  img.alt = w.title;
+  img.style.objectPosition = vpos;
+  frame.style.transform = `rotate(${tilt}deg)`;
+
+  document.getElementById('featured-num').textContent   = `No. ${String(idx + 1).padStart(2, '0')}`;
+  document.getElementById('featured-title').textContent = w.title;
+  document.getElementById('featured-year').textContent  = w.year || '—';
+
+  wrap.style.opacity = '1';
+  wrap.onclick = () => openLb(idx);
 }
 
 function esc(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
@@ -372,7 +549,119 @@ document.addEventListener('keydown',e=>{
 });
 document.querySelectorAll('#menu a').forEach(a=>a.onclick=()=>document.getElementById('menu').classList.remove('show'));
 
+/* Disable right-click on images */
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+    alert('© Vidhyasree Murugesapandian - All Rights Reserved. Images cannot be downloaded or copied.');
+    return false;
+  }
+});
+
+/* Disable drag and drop of images */
+document.addEventListener('dragstart', function(e) {
+  if (e.target.tagName === 'IMG') {
+    e.preventDefault();
+    return false;
+  }
+});
+
+/* Disable keyboard shortcuts for saving/copying */
+document.addEventListener('keydown', function(e) {
+  // Ctrl+S or Cmd+S
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    return false;
+  }
+  // Ctrl+C or Cmd+C (optional - blocks all copy)
+  if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+    if (window.getSelection().toString().length === 0) {
+      e.preventDefault();
+      return false;
+    }
+  }
+});
+
+// Watermarking function
+function addWatermarkToImage(imgElement) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  imgElement.onload = function() {
+    canvas.width = imgElement.width;
+    canvas.height = imgElement.height;
+    
+    // Draw the image
+    ctx.drawImage(imgElement, 0, 0);
+    
+    // Add watermark text
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+    
+    ctx.font = 'bold 14px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText('© Vidhyasree Murugesapandian', canvas.width / 2, canvas.height - 12);
+    
+    // Replace image src with canvas
+    imgElement.src = canvas.toDataURL();
+  };
+  
+  if(imgElement.complete) imgElement.onload();
+}
+
+// Apply watermark to all images in gallery
+function applyWatermarks(){
+  document.querySelectorAll('.card img, .lb-img img, .about-art img').forEach(img => {
+    addWatermarkToImage(img);
+  });
+}
+
 load();
+
+/* ---- Visitor Hit Counter ---- */
+async function trackHits(){
+  let count = null;
+
+  // Count once per browser session (prevents inflation on refresh)
+  const alreadyCounted = sessionStorage.getItem('avv_counted');
+
+  // Try free global counter API (works when served over http/https)
+  try {
+    const method = alreadyCounted ? 'GET' : 'POST';
+    const base = 'https://api.counterapi.dev/v1/artbyvidhya-com/pageviews';
+    const url  = alreadyCounted ? base : base + '/up';
+    const res  = await fetch(url, { method, cache:'no-store' });
+    if(res.ok){
+      const data = await res.json();
+      // counterapi.dev returns { count: N } on up, { value: N } on GET
+      count = data.count ?? data.value ?? null;
+    }
+  } catch(e){ /* offline or blocked — fall through to localStorage */ }
+
+  // Fallback: per-device count via localStorage
+  if(count === null){
+    let stored = parseInt(localStorage.getItem('avv_hits') || '0');
+    if(!alreadyCounted) stored += 1;
+    localStorage.setItem('avv_hits', String(stored));
+    count = stored;
+  }
+
+  if(!alreadyCounted) sessionStorage.setItem('avv_counted','1');
+
+  // Render
+  const fmt = count.toLocaleString();
+  const heroEl = document.getElementById('hit-count');
+  const footEl = document.getElementById('foot-hit-count');
+  const heroWrap = document.getElementById('hit-counter-wrap');
+  const footWrap = document.getElementById('foot-hits-wrap');
+  if(heroEl){ heroEl.textContent = fmt; }
+  if(footEl){ footEl.textContent = fmt; }
+  if(heroWrap){ heroWrap.style.opacity = '1'; }
+  if(footWrap){ footWrap.style.opacity = '1'; }
+}
+
+trackHits();
 </script>
 <style>
 @media(max-width:680px){
